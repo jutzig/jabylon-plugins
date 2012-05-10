@@ -12,7 +12,7 @@
    <extension
          point="de.jutzig.jabylon.ui.config">
       <configSection
-            id="de.jutzig.jabylon.team.git.config"
+            id="de.jutzig.jabylon.team.cvs.config"
             objectClass="de.jutzig.jabylon.properties.Project"
             section="de.jutzig.jabylon.team.cvs.impl.config.CVSConfigSection"
             tab="repository">

@@ -29,12 +29,9 @@ public class CVSConfigSection extends AbstractConfigSection<Project> implements 
 
 	
 	private Form form;
-	private VerticalLayout layout;
 	
 	@Override
 	public Component createContents() {
-		layout = new VerticalLayout();
-		
 		form = new Form();
 		form.setImmediate(true);
 		form.setCaption("CVS Settings");
@@ -73,7 +70,7 @@ public class CVSConfigSection extends AbstractConfigSection<Project> implements 
 				return field; 
 			}
 		});
-		return layout;
+		return form;
 	}
 
 	@Override
@@ -85,7 +82,7 @@ public class CVSConfigSection extends AbstractConfigSection<Project> implements 
 	@Override
 	protected void init(Preferences config) {
 		getDomainObject().eAdapters().add(new WeakReferenceAdapter(this));
-		layout.setVisible(cvsSelected());
+		form.setVisible(cvsSelected());
 		PreferencesItem item = new PreferencesItem(config);
 		item.addProperty(CVSConstants.KEY_USERNAME, String.class, null);
 		item.addProperty(CVSConstants.KEY_PASSWORD, String.class, null);
@@ -97,7 +94,7 @@ public class CVSConfigSection extends AbstractConfigSection<Project> implements 
 
 	@Override
 	public void notifyChanged(Notification notification) {
-		layout.setVisible(cvsSelected());
+		form.setVisible(cvsSelected());
 		
 	}
 
