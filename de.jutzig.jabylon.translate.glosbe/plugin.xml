@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="de.jutzig.jabylon.ui.propertyTools">
+      <tool
+            class="de.jutzig.jabylon.translate.glosbe.TranslationTool"
+            icon="../runo/icons/16/globe.png"
+            id="de.jutzig.jabylon.translate.tool"
+            name="Translation">
+      </tool>
+   </extension>
+
+
+</plugin>
