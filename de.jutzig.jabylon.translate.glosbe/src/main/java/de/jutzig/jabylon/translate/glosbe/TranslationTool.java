@@ -29,6 +29,7 @@ import de.jutzig.jabylon.properties.Property;
 import de.jutzig.jabylon.properties.PropertyFileDescriptor;
 import de.jutzig.jabylon.review.Review;
 import de.jutzig.jabylon.ui.container.PropertyPairContainer.PropertyPairItem;
+import de.jutzig.jabylon.ui.styles.JabylonStyle;
 import de.jutzig.jabylon.ui.tools.PropertyEditorTool;
 
 /**
@@ -83,6 +84,7 @@ public class TranslationTool implements PropertyEditorTool, TextChangeListener {
 		layout.addComponent(field);
 		Table table = new Table();
 		layout.addComponent(table);
+		table.addStyleName(JabylonStyle.TABLE_STRIPED.getCSSName());
 		table.setSizeFull();
 		container = new BeanItemContainer<TranslationResult>(TranslationResult.class);
 //		container.addContainerProperty("source", String.class, "");
