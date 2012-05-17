@@ -29,6 +29,7 @@ import de.jutzig.jabylon.properties.Review;
 import de.jutzig.jabylon.ui.container.PropertyPairContainer.PropertyPairItem;
 import de.jutzig.jabylon.ui.styles.JabylonStyle;
 import de.jutzig.jabylon.ui.tools.PropertyEditorTool;
+import de.jutzig.jabylon.ui.tools.SuggestionAcceptor;
 
 /**
  * @author Johannes Utzig (jutzig.dev@googlemail.com)
@@ -84,7 +85,7 @@ public class TranslationTool implements PropertyEditorTool, TextChangeListener {
 	}
 
 	@Override
-	public void selectionChanged(PropertyPairItem currentSelection, Collection<Review> reviews) {
+	public void selectionChanged(PropertyPairItem currentSelection, Collection<Review> reviews, SuggestionAcceptor acceptor) {
 //		String value = currentSelection.getSourceProperty().getValue();
 //		String[] words = value.split("\\s");
 //		container.removeAllItems();
