@@ -15,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EStructuralFeature;
 
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.FieldEvents.TextChangeEvent;
@@ -25,9 +24,8 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
-import de.jutzig.jabylon.properties.Property;
 import de.jutzig.jabylon.properties.PropertyFileDescriptor;
-import de.jutzig.jabylon.review.Review;
+import de.jutzig.jabylon.properties.Review;
 import de.jutzig.jabylon.ui.container.PropertyPairContainer.PropertyPairItem;
 import de.jutzig.jabylon.ui.styles.JabylonStyle;
 import de.jutzig.jabylon.ui.tools.PropertyEditorTool;
@@ -59,16 +57,7 @@ public class TranslationTool implements PropertyEditorTool, TextChangeListener {
 		destination = translation.getVariant()==null ? "eng" : translation.getVariant().getISO3Language();
 
 	}
-
-	/* (non-Javadoc)
-	 * @see de.jutzig.jabylon.ui.tools.PropertyEditorTool#textSelection(java.lang.String, de.jutzig.jabylon.properties.Property, org.eclipse.emf.ecore.EStructuralFeature)
-	 */
-	@Override
-	public void textSelection(String text, Property owner, EStructuralFeature feature) {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.jutzig.jabylon.ui.tools.PropertyEditorTool#createComponent()
 	 */

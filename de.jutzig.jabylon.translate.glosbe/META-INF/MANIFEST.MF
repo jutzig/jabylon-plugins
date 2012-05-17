@@ -9,5 +9,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.jutzig.jabylon.ui;bundle-version="1.0.0",
  de.jutzig.jabylon.properties;bundle-version="1.0.0",
  org.eclipse.emf.cdo;bundle-version="4.0.1",
- com.vaadin;bundle-version="6.7.5",
- de.jutzig.jabylon.review;bundle-version="1.0.0"
+ com.vaadin;bundle-version="6.7.5"
