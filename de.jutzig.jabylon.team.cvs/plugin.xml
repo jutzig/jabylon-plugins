@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension
-         point="de.jutzig.jabylon.ui.teamProvider">
+         point="de.jutzig.jabylon.common.teamProvider">
       <teamProvider
             class="de.jutzig.jabylon.team.cvs.impl.CVSTeamProvider"
             description="CVS Team Provider"
@@ -10,16 +10,22 @@
       </teamProvider>
    </extension>
    <extension
-         point="de.jutzig.jabylon.ui.config">
-      <configSection
-            id="de.jutzig.jabylon.team.cvs.config"
+         point="de.jutzig.jabylon.rest.ui.config">
+      <section
+            name="CVS"
             objectClass="de.jutzig.jabylon.properties.Project"
-            section="de.jutzig.jabylon.team.cvs.impl.config.CVSConfigSection"
-            tab="repository">
+            section="de.jutzig.jabylon.team.cvs.config.CVSConfigSection"
+            tab="cvs">
          <permission
                requires="GLOBAL_EDIT_PROJECTS">
          </permission>
-      </configSection>
+      </section>
    </extension>
-
+   <extension
+         point="de.jutzig.jabylon.rest.ui.configTab">
+      <tab
+            name="CVS"
+            tabID="cvs">
+      </tab>
+   </extension>
 </plugin>

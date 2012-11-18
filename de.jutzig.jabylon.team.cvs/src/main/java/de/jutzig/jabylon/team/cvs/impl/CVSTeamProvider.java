@@ -5,6 +5,7 @@ package de.jutzig.jabylon.team.cvs.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.netbeans.lib.cvsclient.CVSRoot;
@@ -24,33 +25,27 @@ import org.netbeans.lib.cvsclient.connection.StandardScrambler;
 import org.netbeans.lib.cvsclient.event.FileAddedEvent;
 import org.netbeans.lib.cvsclient.event.ModuleExpansionEvent;
 import org.osgi.service.prefs.Preferences;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.jutzig.jabylon.common.team.TeamProviderException;
 import de.jutzig.jabylon.common.util.PreferencesUtil;
 import de.jutzig.jabylon.properties.Project;
 import de.jutzig.jabylon.properties.ProjectVersion;
 import de.jutzig.jabylon.properties.PropertyFileDescriptor;
-import de.jutzig.jabylon.ui.team.TeamProvider;
+import de.jutzig.jabylon.properties.PropertyFileDiff;
 
 /**
  * @author Johannes Utzig (jutzig.dev@googlemail.com)
  * 
  */
-public class CVSTeamProvider implements TeamProvider {
+public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvider {
 
-	@Override
-	public Iterable<File> update(ProjectVersion project, IProgressMonitor monitor) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+	private static final Logger logger = LoggerFactory.getLogger(CVSTeamProvider.class);
+	
 	@Override
-	public Iterable<File> update(PropertyFileDescriptor descriptor, IProgressMonitor monitor) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void checkout(ProjectVersion project, final IProgressMonitor monitor) throws IOException {
+	public void checkout(ProjectVersion project, final IProgressMonitor monitor) {
 		Client client = null;
 		try {
 			final Client theClient = createClient(project);
@@ -82,26 +77,27 @@ public class CVSTeamProvider implements TeamProvider {
 
 			});
 
-			String module = PreferencesUtil.scopeFor(project.getProject()).get(CVSConstants.KEY_MODULE, "");
+			String module = PreferencesUtil.scopeFor(project.getParent()).get(CVSConstants.KEY_MODULE, "");
 			checkout.setModule(module);
 			checkout.setPruneDirectories(true);
 			checkout.setNotShortenPaths(false);
-			checkout.setCheckoutByRevision(project.getBranch());
-			client.executeCommand(checkout, getGlobalOptions(project.getProject()));
+			checkout.setCheckoutByRevision(project.getName());
+			client.executeCommand(checkout, getGlobalOptions(project.getParent()));
 		} catch (AuthenticationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new TeamProviderException("Checkout failed", e);
 		} catch (CommandAbortedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new TeamProviderException("Checkout failed", e);
 		} catch (CommandException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new TeamProviderException("Checkout failed", e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new TeamProviderException("Checkout failed", e);
 		} finally {
 			if (client != null)
-				client.getConnection().close();
+				try {
+					client.getConnection().close();
+				} catch (IOException e) {
+					logger.error("Failed to close client connection", e);
+				}
 			if (monitor != null)
 				monitor.done();
 		}
@@ -109,24 +105,24 @@ public class CVSTeamProvider implements TeamProvider {
 	}
 
 	@Override
-	public void commit(ProjectVersion project, IProgressMonitor monitor) throws IOException {
+	public void commit(ProjectVersion project, IProgressMonitor monitor) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void commit(PropertyFileDescriptor descriptor, IProgressMonitor monitor) throws IOException {
-		// TODO Auto-generated method stub
+	public void commit(PropertyFileDescriptor descriptor, IProgressMonitor monitor){
+	
 
 	}
 
 	private Client createClient(ProjectVersion projectVersion) throws AuthenticationException, CommandAbortedException {
-		CVSRoot root = CVSRoot.parse(projectVersion.getProject().getRepositoryURI().toString());
+		CVSRoot root = CVSRoot.parse(projectVersion.getParent().getRepositoryURI().toString());
 
 		Connection connection = ConnectionFactory.getConnection(root);
 		if (connection instanceof PServerConnection) {
 			PServerConnection pserver = (PServerConnection) connection;
-			Preferences prefs = PreferencesUtil.scopeFor(projectVersion.getProject());
+			Preferences prefs = PreferencesUtil.scopeFor(projectVersion.getParent());
 
 			pserver.setUserName(prefs.get(CVSConstants.KEY_USERNAME, "anonymous"));
 			Scrambler scrambler = StandardScrambler.getInstance();
@@ -145,6 +141,21 @@ public class CVSTeamProvider implements TeamProvider {
 		options.setCVSRoot(project.getRepositoryURI().toString());
 		return options;
 
+	}
+
+	@Override
+	public Collection<PropertyFileDiff> update(ProjectVersion project,
+			IProgressMonitor monitor) throws TeamProviderException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<PropertyFileDiff> update(
+			PropertyFileDescriptor descriptor, IProgressMonitor monitor)
+			throws TeamProviderException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

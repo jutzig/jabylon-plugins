@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>team.cvs</artifactId>
+	<packaging>bundle</packaging>
+
+	<parent>
+		<groupId>de.jutzig.jabylon</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+		<artifactId>jabylon-parent</artifactId>
+		<relativePath>../releng/parent/pom.xml</relativePath>
+	</parent>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.html</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+					<instructions>
+						<Embed-Dependency>cvsclient</Embed-Dependency>
+						<Embed-Directory>lib</Embed-Directory>
+						<Embed-StripVersion>true</Embed-StripVersion>
+						<Bundle-ClassPath>.,lib/cvsclient.jar</Bundle-ClassPath>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+			
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>properties</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>common</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rest.ui</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.netbeans.lib</groupId>
+			<artifactId>cvsclient</artifactId>
+			<version>20060125</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+	</dependencies>
+</project>
