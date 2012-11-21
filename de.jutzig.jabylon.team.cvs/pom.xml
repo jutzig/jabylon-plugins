@@ -19,6 +19,12 @@
 					<include>**/*.html</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>./</directory>
+				<includes>
+					<include>plugin.xml</include>
+				</includes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -37,7 +43,7 @@
 	</build>
 
 	<dependencies>
-			
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>properties</artifactId>
