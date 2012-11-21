@@ -11,6 +11,19 @@
 		<relativePath>../releng/parent/pom.xml</relativePath>
 	</parent>
 
+	<repositories>
+		<repository>
+			<id>jenkins</id>
+			<url>http://repo.jenkins-ci.org/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<build>
 		<resources>
 			<resource>
@@ -43,7 +56,6 @@
 	</build>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>properties</artifactId>
@@ -70,14 +82,13 @@
 			<artifactId>wicket-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.netbeans.lib</groupId>
+			<groupId>org.jenkins-ci.lib</groupId>
 			<artifactId>cvsclient</artifactId>
-			<version>20060125</version>
+			<version>71-jenkins-8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-
 	</dependencies>
 </project>
