@@ -145,7 +145,7 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 			commit.setRecursive(true);
 			commit.setMessage("Jabylon Auto-Sync Up");
 			// commit.setToRevisionOrBranch(project.getName());
-			commit.setFiles(new File(fullPath).listFiles());
+			commit.setFiles(new File(fullPath).listFiles(new CVSFileFilter()));
 			client.executeCommand(commit, getGlobalOptions(project.getParent()));
 		} catch (AuthenticationException e) {
 			throw new TeamProviderException("Commit failed", e);
@@ -176,12 +176,10 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 
 	private void addMissingFiles(File parentDir, Client client, List<File> filesToAdd) throws IOException {
 		Set<File> knownFiles = client.getAllFiles(parentDir);
-		File[] files = parentDir.listFiles();
+		File[] files = parentDir.listFiles(new CVSFileFilter());
 		for (File file : files) {
 			if(file.isDirectory())
 			{
-				if(file.getName().equals("CVS"))
-					continue;
 				addMissingFiles(file, client, filesToAdd);
 			}
 			else
@@ -252,7 +250,7 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 			client.getEventManager().addCVSListener(diffListener);
 			command.setRecursive(true);
 			command.setPruneDirectories(true);
-			command.setFiles(new File(fullPath).listFiles());
+			command.setFiles(new File(fullPath).listFiles(new CVSFileFilter()));
 			command.setBuildDirectories(true);
 			client.executeCommand(command, getGlobalOptions(project.getParent()));
 			return diffListener.getDiff();
