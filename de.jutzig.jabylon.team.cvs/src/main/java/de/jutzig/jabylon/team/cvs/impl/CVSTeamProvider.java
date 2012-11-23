@@ -73,14 +73,11 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 			checkout.setPruneDirectories(true);
 			checkout.setNotShortenPaths(false);
 			checkout.setCheckoutByRevision(project.getName());
+			checkout.setCheckoutDirectory(project.getName());
 			client.executeCommand(checkout, getGlobalOptions(project.getParent()));
-		} catch (AuthenticationException e) {
-			throw new TeamProviderException("Checkout failed", e);
-		} catch (CommandAbortedException e) {
-			throw new TeamProviderException("Checkout failed", e);
-		} catch (CommandException e) {
-			throw new TeamProviderException("Checkout failed", e);
 		} catch (Exception e) {
+			// delete directory if checkout fails, otherwise we present update / commit actions instead
+			cleanupProjectVersionDirectory(project);
 			throw new TeamProviderException("Checkout failed", e);
 		} finally {
 			if (client != null)
@@ -95,18 +92,20 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 
 	}
 
+	private void cleanupProjectVersionDirectory(ProjectVersion project) {
+		File versionDir = new File(project.absolutPath().toFileString());
+		try {
+			versionDir.delete();
+		} catch (Exception e) {
+			// ignore
+		}
+	}
+
 	private void checkDirectories(ProjectVersion projectVersion) {
-		File projectDir = new File(projectVersion.getParent()
-				.absoluteFilePath().toFileString());
+		File projectDir = new File(projectVersion.getParent().absoluteFilePath().toFileString());
 		if (!projectDir.exists()) {
 			if (!projectDir.mkdirs())
 				throw new TeamProviderException("Checkout failed. Unable to create project directory");
-		}
-
-		File versionDir = new File(projectDir, projectVersion.getName());
-		if (!versionDir.exists()) {
-			if (!versionDir.mkdirs())
-				throw new TeamProviderException("Checkout failed. Unable to create project version directory");
 		}
 	}
 
@@ -118,8 +117,6 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 			client = theClient;
 			final String fullPath = project.absolutPath().toFileString();
 			monitor.beginTask("Committing Changes", IProgressMonitor.UNKNOWN);
-
-
 
 			// TODO: is there a way to get an estimate at least?
 			client.getEventManager().addCVSListener(new ProgressMonitorListener(monitor, client, fullPath));
@@ -220,14 +217,15 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 
 		Client client = new Client(connection, new StandardAdminHandler());
 		File parentDir = new File(projectVersion.absoluteFilePath().toFileString());
-		if(parentDir.listFiles().length==1)
+		if(parentDir.exists())
 		{
 			//the checkout is already done. Use the module as the client local path
-			client.setLocalPath(parentDir.listFiles()[0].getAbsolutePath());
+			client.setLocalPath(parentDir.getAbsolutePath());
 		}
 		else
 		{
-			client.setLocalPath(parentDir.getAbsolutePath());
+			// use the project dir as local path and set the version as checkout directory for the CVS command
+			client.setLocalPath(parentDir.getParentFile().getAbsolutePath());
 		}
 		return client;
 	}
