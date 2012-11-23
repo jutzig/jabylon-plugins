@@ -49,7 +49,7 @@ import de.jutzig.jabylon.properties.PropertyFileDiff;
 
 /**
  * @author Johannes Utzig (jutzig.dev@googlemail.com)
- * 
+ *
  */
 public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvider {
 
@@ -59,6 +59,7 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 	public void checkout(ProjectVersion project, final IProgressMonitor monitor) {
 		Client client = null;
 		try {
+			checkDirectories(project);
 			final Client theClient = createClient(project);
 			client = theClient;
 			final String fullPath = project.absolutPath().toFileString();
@@ -94,6 +95,21 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 
 	}
 
+	private void checkDirectories(ProjectVersion projectVersion) {
+		File projectDir = new File(projectVersion.getParent()
+				.absoluteFilePath().toFileString());
+		if (!projectDir.exists()) {
+			if (!projectDir.mkdirs())
+				throw new TeamProviderException("Checkout failed. Unable to create project directory");
+		}
+
+		File versionDir = new File(projectDir, projectVersion.getName());
+		if (!versionDir.exists()) {
+			if (!versionDir.mkdirs())
+				throw new TeamProviderException("Checkout failed. Unable to create project version directory");
+		}
+	}
+
 	@Override
 	public void commit(ProjectVersion project, final IProgressMonitor monitor) {
 		Client client = null;
@@ -102,12 +118,12 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 			client = theClient;
 			final String fullPath = project.absolutPath().toFileString();
 			monitor.beginTask("Committing Changes", IProgressMonitor.UNKNOWN);
-			
 
-			
+
+
 			// TODO: is there a way to get an estimate at least?
 			client.getEventManager().addCVSListener(new ProgressMonitorListener(monitor, client, fullPath));
-			
+
 			File[] filesToAdd = calculateMissingFiles(client,new File(fullPath));
 			if(filesToAdd.length>0)
 			{
@@ -115,19 +131,19 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 				add.setMessage("Jabylon Auto-Sync Up");
 				add.setFiles(filesToAdd);
 				client.executeCommand(add, getGlobalOptions(project.getParent()));
-				
+
 				try {
 					client.getConnection().close();
 				} catch (IOException e) {
 					logger.error("Failed to close client connection", e);
 				}
-				
+
 				//must create a new client once the add succeeded
 				theClient = createClient(project);
 				client = theClient;
-				
+
 			}
-			
+
 			final CommitCommand commit = new CommitCommand();
 			commit.setRecursive(true);
 			commit.setMessage("Jabylon Auto-Sync Up");
@@ -180,7 +196,7 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 				}
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -211,7 +227,7 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 		}
 		else
 		{
-			client.setLocalPath(parentDir.getAbsolutePath());			
+			client.setLocalPath(parentDir.getAbsolutePath());
 		}
 		return client;
 	}
@@ -233,7 +249,7 @@ public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvid
 			monitor.beginTask("Updating", IProgressMonitor.UNKNOWN);
 			// TODO: is there a way to get an estimate at least?
 			UpdateCommand command = new UpdateCommand();
-			
+
 			DiffListener diffListener = new DiffListener(monitor, client, fullPath);
 			client.getEventManager().addCVSListener(diffListener);
 			command.setRecursive(true);
@@ -344,7 +360,7 @@ class ProgressMonitorListener extends BasicListener {
 			return "..." + result.substring(result.length() - 50);
 		return result;
 	}
-	
+
 	protected String deresolve(String path)
 	{
 		return path.substring(basePath.length());
@@ -357,13 +373,13 @@ class DiffListener extends ProgressMonitorListener
 
 	private static final long serialVersionUID = 1L;
 	private List<PropertyFileDiff> diffs;
-	
-	
+
+
 	public DiffListener(IProgressMonitor monitor, Client client, String basePath) {
 		super(monitor, client, basePath);
 		diffs = new ArrayList<PropertyFileDiff>();
 	}
-	
+
 	public Collection<PropertyFileDiff> getDiff()
 	{
 		return diffs;
@@ -376,7 +392,7 @@ class DiffListener extends ProgressMonitorListener
 		diff.setKind(DiffKind.ADD);
 		diffs.add(diff);
 	}
-	
+
 	@Override
 	public void fileRemoved(FileRemovedEvent arg0) {
 		PropertyFileDiff diff = PropertiesFactory.eINSTANCE.createPropertyFileDiff();
@@ -384,10 +400,10 @@ class DiffListener extends ProgressMonitorListener
 		diff.setKind(DiffKind.REMOVE);
 		diffs.add(diff);
 	}
-	
+
 	@Override
 	public void fileUpdated(FileUpdatedEvent arg0) {
-		
+
 		PropertyFileDiff diff = PropertiesFactory.eINSTANCE.createPropertyFileDiff();
 		diff.setNewPath(deresolve(arg0.getFilePath()));
 		diff.setOldPath(deresolve(arg0.getFilePath()));
