@@ -17,7 +17,7 @@
             section="de.jutzig.jabylon.team.cvs.config.CVSConfigSection"
             tab="cvs">
          <permission
-               requires="GLOBAL_EDIT_PROJECTS">
+               requires="#Project.global.config">
          </permission>
       </section>
    </extension>
