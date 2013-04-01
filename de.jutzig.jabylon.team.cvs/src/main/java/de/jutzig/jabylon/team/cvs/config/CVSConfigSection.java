@@ -26,7 +26,7 @@ public class CVSConfigSection extends AbstractConfigSection<Project>{
 
 
 	@Override
-	public WebMarkupContainer createContents(String id, IModel<Project> input, Preferences config) {
+	public WebMarkupContainer doCreateContents(String id, IModel<Project> input, Preferences config) {
 		return new CVSConfigPanel(id, input, config);
 	}
 
