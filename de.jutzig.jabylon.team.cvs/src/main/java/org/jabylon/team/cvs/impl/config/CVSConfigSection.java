@@ -1,4 +1,4 @@
-package de.jutzig.jabylon.team.cvs.impl.config;
+package org.jabylon.team.cvs.impl.config;
 
 
 

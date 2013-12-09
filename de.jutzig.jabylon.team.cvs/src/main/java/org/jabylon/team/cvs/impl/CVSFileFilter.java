@@ -1,4 +1,4 @@
-package de.jutzig.jabylon.team.cvs.impl;
+package org.jabylon.team.cvs.impl;
 
 import java.io.File;
 import java.io.FileFilter;

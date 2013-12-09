@@ -1,7 +1,7 @@
 /**
  *
  */
-package de.jutzig.jabylon.team.cvs.impl;
+package org.jabylon.team.cvs.impl;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,20 +38,20 @@ import org.osgi.service.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jutzig.jabylon.common.team.TeamProviderException;
-import de.jutzig.jabylon.common.util.PreferencesUtil;
-import de.jutzig.jabylon.properties.DiffKind;
-import de.jutzig.jabylon.properties.Project;
-import de.jutzig.jabylon.properties.ProjectVersion;
-import de.jutzig.jabylon.properties.PropertiesFactory;
-import de.jutzig.jabylon.properties.PropertyFileDescriptor;
-import de.jutzig.jabylon.properties.PropertyFileDiff;
+import org.jabylon.common.team.TeamProviderException;
+import org.jabylon.common.util.PreferencesUtil;
+import org.jabylon.properties.DiffKind;
+import org.jabylon.properties.Project;
+import org.jabylon.properties.ProjectVersion;
+import org.jabylon.properties.PropertiesFactory;
+import org.jabylon.properties.PropertyFileDescriptor;
+import org.jabylon.properties.PropertyFileDiff;
 
 /**
  * @author Johannes Utzig (jutzig.dev@googlemail.com)
  *
  */
-public class CVSTeamProvider implements de.jutzig.jabylon.common.team.TeamProvider {
+public class CVSTeamProvider implements org.jabylon.common.team.TeamProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(CVSTeamProvider.class);
 

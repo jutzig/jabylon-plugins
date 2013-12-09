@@ -2,24 +2,24 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension
-         point="de.jutzig.jabylon.common.teamProvider">
+         point="org.jabylon.common.teamProvider">
       <teamProvider
-            class="de.jutzig.jabylon.team.cvs.impl.CVSTeamProvider"
+            class="org.jabylon.team.cvs.impl.CVSTeamProvider"
             description="CVS Team Provider"
             name="CVS">
       </teamProvider>
    </extension>
    <extension
-         point="de.jutzig.jabylon.rest.ui.config">
+         point="org.jabylon.rest.ui.config">
       <section
             name="CVS"
-            objectClass="de.jutzig.jabylon.properties.Project"
-            section="de.jutzig.jabylon.team.cvs.config.CVSConfigSection"
+            objectClass="org.jabylon.properties.Project"
+            section="org.jabylon.team.cvs.config.CVSConfigSection"
             tab="cvs">
       </section>
    </extension>
    <extension
-         point="de.jutzig.jabylon.rest.ui.configTab">
+         point="org.jabylon.rest.ui.configTab">
       <tab
             name="CVS"
             tabID="cvs">

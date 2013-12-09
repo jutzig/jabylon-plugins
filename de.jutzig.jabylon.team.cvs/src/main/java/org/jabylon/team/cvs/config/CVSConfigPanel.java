@@ -1,20 +1,20 @@
 /**
- * 
+ *
  */
-package de.jutzig.jabylon.team.cvs.config;
+package org.jabylon.team.cvs.config;
 
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.eclipse.emf.common.util.URI;
+import org.jabylon.team.cvs.impl.CVSConstants;
 import org.osgi.service.prefs.Preferences;
 
-import de.jutzig.jabylon.properties.Project;
-import de.jutzig.jabylon.properties.PropertiesPackage;
-import de.jutzig.jabylon.rest.ui.model.EObjectPropertyModel;
-import de.jutzig.jabylon.rest.ui.model.PreferencesPropertyModel;
-import de.jutzig.jabylon.team.cvs.impl.CVSConstants;
+import org.jabylon.properties.Project;
+import org.jabylon.properties.PropertiesPackage;
+import org.jabylon.rest.ui.model.EObjectPropertyModel;
+import org.jabylon.rest.ui.model.PreferencesPropertyModel;
 
 /**
  * @author Johannes Utzig (jutzig.dev@googlemail.com)
@@ -23,7 +23,7 @@ import de.jutzig.jabylon.team.cvs.impl.CVSConstants;
 public class CVSConfigPanel extends GenericPanel<Project> {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public CVSConfigPanel(String id, IModel<Project> model, Preferences config) {
 		super(id, model);
 		EObjectPropertyModel<URI, Project> repositoryURI = new EObjectPropertyModel<URI, Project>(model, PropertiesPackage.Literals.PROJECT__REPOSITORY_URI);
@@ -31,10 +31,10 @@ public class CVSConfigPanel extends GenericPanel<Project> {
 		uriField.setType(URI.class);
 		uriField.setConvertEmptyInputStringToNull(true);
 		add(uriField);
-		
+
 		PreferencesPropertyModel moduleModel = new PreferencesPropertyModel(config, CVSConstants.KEY_MODULE, "");
 		add(new TextField<String>("inputModule",moduleModel));
-		
+
 		PreferencesPropertyModel usernameModel = new PreferencesPropertyModel(config, CVSConstants.KEY_USERNAME, "");
 		add(new TextField<String>("inputUsername",usernameModel));
 		PreferencesPropertyModel passwordModel = new PreferencesPropertyModel(config, CVSConstants.KEY_PASSWORD, "");
@@ -42,11 +42,11 @@ public class CVSConfigPanel extends GenericPanel<Project> {
 		passwordTextField.setResetPassword(false);
 		passwordTextField.setRequired(false);
 		add(passwordTextField);
-		
+
 	}
 
-	
-//	
+
+//
 //	@Override
 //	public Component createContents() {
 //		form = new Form();
@@ -73,21 +73,21 @@ public class CVSConfigPanel extends GenericPanel<Project> {
 //				{
 //					field.setDescription("Check to have Jabylon automatically push all commits to a remote Git Repository");
 //					field.setCaption("Push Automatically");
-//				} 
+//				}
 //				else if(propertyId.equals(GitConstants.KEY_USERNAME))
 //				{
 //					field.setCaption("Username");
 //					if (field instanceof TextField) {
 //						TextField text = (TextField) field;
 //						text.setNullRepresentation("");
-//						
+//
 //					}
 //				}
-//				return field; 
+//				return field;
 //			}
 //		});
 //		return form;
 //	}
 //
-	
+
 }
