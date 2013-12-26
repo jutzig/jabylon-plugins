@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Service;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.netbeans.lib.cvsclient.CVSRoot;
 import org.netbeans.lib.cvsclient.Client;
@@ -37,7 +40,7 @@ import org.netbeans.lib.cvsclient.event.ModuleExpansionEvent;
 import org.osgi.service.prefs.Preferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.jabylon.common.team.TeamProvider;
 import org.jabylon.common.team.TeamProviderException;
 import org.jabylon.common.util.PreferencesUtil;
 import org.jabylon.properties.DiffKind;
@@ -51,9 +54,14 @@ import org.jabylon.properties.PropertyFileDiff;
  * @author Johannes Utzig (jutzig.dev@googlemail.com)
  *
  */
+@Component(enabled=true,immediate=true)
+@Service
 public class CVSTeamProvider implements org.jabylon.common.team.TeamProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(CVSTeamProvider.class);
+	
+	@Property(value="CVS")
+	private static String KEY_KIND = TeamProvider.KEY_KIND;
 
 	@Override
 	public void checkout(ProjectVersion project, final IProgressMonitor monitor) {
