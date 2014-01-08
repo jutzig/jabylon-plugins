@@ -188,7 +188,7 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 	private ISVNAuthenticationManager createAuthenticationManager(ProjectVersion projectVersion) {
 		Preferences prefs = PreferencesUtil.scopeFor(projectVersion.getParent());
 		String username = prefs.get(SVNConstants.KEY_USERNAME, null);
-		String password = prefs.get(SVNConstants.KEY_USERNAME, null);
+		String password = prefs.get(SVNConstants.KEY_PASSWORD, null);
 		return SVNWCUtil.createDefaultAuthenticationManager(username, password);
 	}
 
