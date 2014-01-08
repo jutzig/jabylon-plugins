@@ -51,8 +51,9 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Embed-Dependency>svnkit</Embed-Dependency>
+						<Embed-Dependency>svnkit,sqljet,trilead-ssh2,sequence-library,antlr-runtime</Embed-Dependency>
 						<Embed-Directory>lib</Embed-Directory>
+						<Embed-Transitive>true</Embed-Transitive>
 						<Embed-StripVersion>true</Embed-StripVersion>
 						<Import-Package>!com.sun*,!com.trilead*,!de.regnis*,!org.ietf*,!org.tmatesoft*,*</Import-Package>
 						<Bundle-ClassPath>.,lib/svnkit.jar,lib/sqljet.jar,lib/trilead-ssh2,lib/sequence-library.jar,lib/antlr-runtime.jar</Bundle-ClassPath>
