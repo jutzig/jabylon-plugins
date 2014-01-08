@@ -84,7 +84,13 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 			long revision = manager.getUpdateClient().doCheckout(createSVNURL(project), targetDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, true);
 			logger.info("Checkout successful at revision {}", revision);
 
-		} catch (Exception e) {
+		} catch(SVNException e) {
+			// delete directory if checkout fails, otherwise we present update /
+			// commit actions instead
+			cleanupProjectVersionDirectory(project);
+			throw new TeamProviderException(e.getMessage(), e);			
+		}
+		catch (Exception e) {
 			// delete directory if checkout fails, otherwise we present update /
 			// commit actions instead
 			cleanupProjectVersionDirectory(project);
@@ -160,8 +166,10 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 					throw new TeamProviderException(commitInfo.getErrorMessage().getMessage(), commitInfo.getErrorMessage().getCause());
 				logger.info("SVN commit successfully at revision {}", commitInfo.getNewRevision());				
 			}
-		} catch (Exception e) {
-			throw new TeamProviderException("Commit failed", e);
+		} catch (SVNException e) {
+			throw new TeamProviderException(e.getMessage(), e);
+		} catch (IOException e) {
+			throw new TeamProviderException("Commit failed",e);
 		} finally {
 			if (manager != null)
 				manager.dispose();
@@ -228,6 +236,8 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 			long revision = manager.getUpdateClient().doUpdate(new File(fullPath), SVNRevision.HEAD, SVNDepth.INFINITY, false, false);
 			logger.info("SVN update to revision {} successfull", revision);
 			return handler.getDiff();
+		} catch (SVNException e) {
+			throw new TeamProviderException(e.getMessage(), e);
 		} catch (Exception e) {
 			throw new TeamProviderException("Update failed", e);
 		} finally {
@@ -248,7 +258,6 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 
 class ProgressMonitorHandler implements ISVNEventHandler {
 
-	private static final long serialVersionUID = 1L;
 	private final IProgressMonitor monitor;
 	private String basePath;
 
@@ -289,7 +298,6 @@ class ProgressMonitorHandler implements ISVNEventHandler {
 
 class DiffHandler extends ProgressMonitorHandler {
 
-	private static final long serialVersionUID = 1L;
 	private List<PropertyFileDiff> diff;
 
 	public DiffHandler(IProgressMonitor monitor, String basePath) {
@@ -300,7 +308,6 @@ class DiffHandler extends ProgressMonitorHandler {
 	@Override
 	public void handleEvent(SVNEvent event, double progress) throws SVNException {
 		super.handleEvent(event, progress);
-		File file = event.getFile();
 		SVNEventAction action = event.getAction();
 		if (action.equals(SVNEventAction.UPDATE_REPLACE) || action.equals(SVNEventAction.UPDATE_UPDATE)) {
 			PropertyFileDiff fileDiff = PropertiesFactory.eINSTANCE.createPropertyFileDiff();
