@@ -23,7 +23,7 @@
 
 	<modules>
 		<module>team.svn</module>
-		<module>de.jutzug.jabylon.team.cvs</module>
+		<module>de.jutzig.jabylon.team.cvs</module>
 	</modules>
 
 </project>
