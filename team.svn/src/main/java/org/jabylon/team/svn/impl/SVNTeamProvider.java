@@ -107,7 +107,11 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 	private SVNURL createSVNURL(ProjectVersion projectVersion) throws SVNException {
 		Preferences prefs = PreferencesUtil.scopeFor(projectVersion.getParent());
 		URI uri = projectVersion.getParent().getRepositoryURI();
-		uri.appendSegment(projectVersion.getName());
+		String branch = projectVersion.getName();
+		//if it's not trunk we need the branches folder
+		if(!"trunk".equals(branch))
+			uri.appendSegment("branches");
+		uri.appendSegment(branch);
 		if (prefs.get(SVNConstants.KEY_MODULE, null) != null)
 			uri.appendSegment(prefs.get(SVNConstants.KEY_MODULE, null));
 
