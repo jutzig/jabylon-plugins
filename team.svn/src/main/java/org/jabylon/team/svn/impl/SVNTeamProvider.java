@@ -81,7 +81,7 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 			logger.info("Checking out " + svnurl);
 			File targetDir = new File(project.absoluteFilePath().path());
 			manager.getUpdateClient().setEventHandler(new ProgressMonitorHandler(sub.newChild(1000), targetDir.getPath()));
-			long revision = manager.getUpdateClient().doCheckout(createSVNURL(project), targetDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, true);
+			long revision = manager.getUpdateClient().doCheckout(svnurl, targetDir, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.INFINITY, true);
 			logger.info("Checkout successful at revision {}", revision);
 
 		} catch(SVNException e) {
@@ -110,10 +110,10 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 		String branch = projectVersion.getName();
 		//if it's not trunk we need the branches folder
 		if(!"trunk".equals(branch))
-			uri.appendSegment("branches");
-		uri.appendSegment(branch);
+			uri = uri.appendSegment("branches");
+		uri = uri.appendSegment(branch);
 		if (prefs.get(SVNConstants.KEY_MODULE, null) != null)
-			uri.appendSegment(prefs.get(SVNConstants.KEY_MODULE, null));
+			uri = uri.appendSegments(prefs.get(SVNConstants.KEY_MODULE, null).split("/"));
 
 		return SVNURL.parseURIEncoded(uri.toString());
 	}
