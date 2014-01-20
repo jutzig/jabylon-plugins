@@ -10,6 +10,8 @@
 		<artifactId>jabylon-parent</artifactId>
 	</parent>
 
+	<description>Team Provider that connects to CVS repositories</description>
+
 	<repositories>
 		<repository>
 			<id>jenkins</id>
