@@ -9,7 +9,7 @@
 		<artifactId>jabylon-parent</artifactId>
 	</parent>
 	
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 
 	<description>Team Provider that connects to CVS repositories</description>
 
