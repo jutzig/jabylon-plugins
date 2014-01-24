@@ -2,25 +2,25 @@
 
 <wicket:panel>
 	<div class="control-group">
-		<label class="control-label" for="inputURI">Repository URI</label>
+		<label class="control-label" for="inputURI"><wicket:message key="repository.uri">[Repository URI]</wicket:message></label>
 		<div class="controls">
 			<input type="text" id="inputURI" wicket:id="inputURI" placeholder=":pserver://example.org/cvsroot">
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label" for="inputModule">CVS Module</label>
+		<label class="control-label" for="inputModule"><wicket:message key="module">[CVS Module]</wicket:message></label>
 		<div class="controls">
-			<input type="text" id="inputModule" wicket:id="inputModule" placeholder="Module">
+			<input type="text" id="inputModule" wicket:id="inputModule"  wicket:message="placeholder:module.placeholder">
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label" for="inputUsername">Username</label>
+		<label class="control-label" for="inputUsername"><wicket:message key="username">[Username]</wicket:message></label>
 		<div class="controls">
 			<input type="text" id="inputUsername" wicket:id="inputUsername">
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label" for="inputPassword">Password</label>
+		<label class="control-label" for="inputPassword"><wicket:message key="password">[Password]</wicket:message></label>
 		<div class="controls">
 			<input type="password" id="inputPassword" wicket:id="inputPassword" placeholder="password">
 		</div>

@@ -6,9 +6,11 @@
 
 	<parent>
 		<groupId>org.jabylon</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 		<artifactId>jabylon-parent</artifactId>
 	</parent>
+	
+	<version>1.0.0-SNAPSHOT</version>
 
 	<description>Team Provider that connects to subversion repositories</description>
 
@@ -86,19 +88,19 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>properties</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>common</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rest.ui</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -125,7 +127,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>security</artifactId>
-			<version>${project.version}</version>
+			<version>${project.parent.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
