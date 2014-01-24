@@ -12,6 +12,12 @@
 		<artifactId>jabylon-parent</artifactId>
 	</parent>
 
+	<scm>
+		<url>https://github.com/jutzig/jabylon-plugins</url>
+		<connection>scm:git:https://github.com/jutzig/jabylon-plugins.git</connection>
+		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
+	</scm>
+
 	<properties>
 		<singleton></singleton>
 		<bundle.symbolicName>${project.artifactId}</bundle.symbolicName>

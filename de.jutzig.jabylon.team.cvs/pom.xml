@@ -14,6 +14,12 @@
 
 	<description>Team Provider that connects to CVS repositories</description>
 
+	<scm>
+		<url>https://github.com/jutzig/jabylon-plugins</url>
+		<connection>scm:git:https://github.com/jutzig/jabylon-plugins.git</connection>
+		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
+	</scm>
+
 	<repositories>
 		<repository>
 			<id>jenkins</id>
