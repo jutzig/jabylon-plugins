@@ -216,8 +216,11 @@ public class CVSTeamProvider implements org.jabylon.common.team.TeamProvider {
 			Preferences prefs = PreferencesUtil.scopeFor(projectVersion.getParent());
 
 			pserver.setUserName(prefs.get(CVSConstants.KEY_USERNAME, "anonymous"));
-			Scrambler scrambler = StandardScrambler.getInstance();
-			pserver.setEncodedPassword(scrambler.scramble(prefs.get(CVSConstants.KEY_PASSWORD, null)));
+			String password = prefs.get(CVSConstants.KEY_PASSWORD, null);
+			if(password!=null) {
+				Scrambler scrambler = StandardScrambler.getInstance();
+				pserver.setEncodedPassword(scrambler.scramble(password));				
+			}
 
 		}
 
