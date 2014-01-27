@@ -31,4 +31,17 @@
 		<module>de.jutzig.jabylon.team.cvs</module>
 	</modules>
 
+		<repositories>
+		<repository>
+			<id>jabylon</id>
+			<url>http://www.jabylon.org/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 </project>
