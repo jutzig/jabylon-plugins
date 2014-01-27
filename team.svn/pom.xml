@@ -19,6 +19,19 @@
 		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
 	</scm>
 
+	<repositories>
+		<repository>
+			<id>jabylon</id>
+			<url>http://www.jabylon.org/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<build>
 		<resources>
 			<resource>

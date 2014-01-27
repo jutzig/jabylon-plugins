@@ -9,17 +9,18 @@
 		<artifactId>jabylon-parent</artifactId>
 	</parent>
 	
-	<version>1.1.0</version>
-
-	<description>Team Provider that connects to CVS repositories</description>
-
-	<scm>
-		<url>https://github.com/jutzig/jabylon-plugins</url>
-		<connection>scm:git:https://github.com/jutzig/jabylon-plugins.git</connection>
-		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
-	</scm>
 
 	<repositories>
+		<repository>
+			<id>jabylon</id>
+			<url>http://www.jabylon.org/maven</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 		<repository>
 			<id>jenkins</id>
 			<url>http://repo.jenkins-ci.org/public/</url>
@@ -29,8 +30,18 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</repository>
-	</repositories>
+		</repository>		
+	</repositories>	
+	
+	<version>1.1.0</version>
+
+	<description>Team Provider that connects to CVS repositories</description>
+
+	<scm>
+		<url>https://github.com/jutzig/jabylon-plugins</url>
+		<connection>scm:git:https://github.com/jutzig/jabylon-plugins.git</connection>
+		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
+	</scm>
 
 	<build>
 		<resources>
