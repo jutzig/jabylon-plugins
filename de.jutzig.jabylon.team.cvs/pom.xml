@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>team.cvs</artifactId>
 	<packaging>bundle</packaging>
@@ -8,7 +9,7 @@
 		<version>1.0.0</version>
 		<artifactId>jabylon-parent</artifactId>
 	</parent>
-	
+
 
 	<repositories>
 		<repository>
@@ -30,10 +31,10 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-		</repository>		
-	</repositories>	
-	
-	<version>1.1.0</version>
+		</repository>
+	</repositories>
+
+	<version>1.0.1-SNAPSHOT</version>
 
 	<description>Team Provider that connects to CVS repositories</description>
 
@@ -72,6 +73,26 @@
 					</instructions>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>de.jutzig</groupId>
+				<artifactId>github-release-plugin</artifactId>
+				<version>0.0.2-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>github-upload</id>
+						<phase>install</phase>
+						<goals>
+							<goal>release</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<releaseName>v1.0.1</releaseName>
+							<tag>v1.0.1</tag>
+							<artifact>${project.build.directory}/${project.groupId}.${project.artifactId}-${project.version}.jar</artifact>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -94,7 +115,7 @@
 			<version>${project.parent.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>cdo</artifactId>
