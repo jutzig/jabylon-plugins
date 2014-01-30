@@ -33,7 +33,7 @@
 		</repository>
 	</repositories>
 
-	<version>1.0.3</version>
+	<version>1.0.4-SNAPSHOT</version>
 
 	<description>Team Provider that connects to CVS repositories</description>
 
