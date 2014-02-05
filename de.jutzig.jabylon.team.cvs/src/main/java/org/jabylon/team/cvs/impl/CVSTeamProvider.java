@@ -291,6 +291,46 @@ public class CVSTeamProvider implements org.jabylon.common.team.TeamProvider {
 		return null;
 	}
 
+	@Override
+	public Collection<PropertyFileDiff> reset(ProjectVersion project, IProgressMonitor monitor) throws TeamProviderException {
+		Client client = null;
+		try {
+			final Client theClient = createClient(project);
+			client = theClient;
+			final String fullPath = project.absolutPath().toFileString();
+			monitor.beginTask("Resetting", IProgressMonitor.UNKNOWN);
+			// TODO: is there a way to get an estimate at least?
+			UpdateCommand command = new UpdateCommand();
+			DiffListener diffListener = new DiffListener(monitor, client, fullPath);
+			client.getEventManager().addCVSListener(diffListener);
+			command.setCleanCopy(true);
+			command.setRecursive(true);
+			command.setResetStickyOnes(true);
+			command.setPruneDirectories(true);
+			command.setFiles(new File(fullPath).listFiles(new CVSFileFilter()));
+			command.setBuildDirectories(true);
+			client.executeCommand(command, getGlobalOptions(project.getParent()));
+			return diffListener.getDiff();
+		} catch (AuthenticationException e) {
+			throw new TeamProviderException("Reset failed", e);
+		} catch (CommandAbortedException e) {
+			throw new TeamProviderException("Reset failed", e);
+		} catch (CommandException e) {
+			throw new TeamProviderException("Reset failed", e);
+		} catch (Exception e) {
+			throw new TeamProviderException("Reset failed", e);
+		} finally {
+			if (client != null)
+				try {
+					client.getConnection().close();
+				} catch (IOException e) {
+					logger.error("Failed to close client connection", e);
+				}
+			if (monitor != null)
+				monitor.done();
+		}
+	}
+
 }
 
 class ProgressMonitorListener extends BasicListener {
