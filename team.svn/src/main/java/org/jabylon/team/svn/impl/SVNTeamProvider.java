@@ -253,6 +253,34 @@ public class SVNTeamProvider implements org.jabylon.common.team.TeamProvider {
 	}
 
 	@Override
+	public Collection<PropertyFileDiff> reset(ProjectVersion project, IProgressMonitor monitor) throws TeamProviderException {
+		SubMonitor subMon = SubMonitor.convert(monitor);
+		SVNClientManager manager = null;
+		try {
+			manager = createSVNClientManager(project);
+			final String fullPath = project.absolutPath().toFileString();
+			subMon.beginTask("Calculating Diff", 100);
+			DiffHandler handler = new DiffHandler(subMon, fullPath);
+			manager.getWCClient().setEventHandler(handler);
+			manager.getWCClient().doRevert(new File[]{new File(fullPath)}, SVNDepth.INFINITY, null);
+			logger.info("SVN revert successfull");
+			manager.getStatusClient().setEventHandler(null);
+			subMon.setTaskName("Deleting unversioned files");
+			manager.getStatusClient().doStatus(new File(fullPath), null, SVNDepth.INFINITY, false, false, true, false, new StatusCollector(handler.getDiff(),fullPath), null);
+			return handler.getDiff();
+		} catch (SVNException e) {
+			throw new TeamProviderException(e.getMessage(), e);
+		} catch (Exception e) {
+			throw new TeamProviderException("Reset failed", e);
+		} finally {
+			if (manager != null)
+				manager.dispose();
+			if (monitor != null)
+				monitor.done();
+		}
+	}
+	
+	@Override
 	public Collection<PropertyFileDiff> update(PropertyFileDescriptor descriptor, IProgressMonitor monitor) throws TeamProviderException {
 		// TODO : implement
 		return Collections.emptyList();
@@ -329,6 +357,12 @@ class DiffHandler extends ProgressMonitorHandler {
 			fileDiff.setKind(DiffKind.REMOVE);
 			fileDiff.setOldPath(deresolve(event.getFile().getAbsolutePath()));
 			diff.add(fileDiff);
+		} else if (action.equals(SVNEventAction.REVERT)) {
+			PropertyFileDiff fileDiff = PropertiesFactory.eINSTANCE.createPropertyFileDiff();
+			fileDiff.setKind(DiffKind.MODIFY);
+			fileDiff.setOldPath(deresolve(event.getFile().getAbsolutePath()));
+			fileDiff.setNewPath(deresolve(event.getFile().getAbsolutePath()));
+			diff.add(fileDiff);
 		}
 	}
 
@@ -336,4 +370,36 @@ class DiffHandler extends ProgressMonitorHandler {
 		return diff;
 	}
 
+}
+
+class StatusCollector implements ISVNStatusHandler {
+	
+	private static Logger LOG = LoggerFactory.getLogger(StatusCollector.class);
+	private List<PropertyFileDiff> diff;
+	private String basePath;
+
+	public StatusCollector(List<PropertyFileDiff> diff, String basePath) {
+		this.diff = diff;
+		this.basePath = basePath;
+	}
+
+	@Override
+	public void handleStatus(SVNStatus status) throws SVNException {
+		if(status.getCombinedNodeAndContentsStatus() == SVNStatusType.STATUS_UNVERSIONED) {
+			File file = status.getFile();
+			String deresolved = deresolve(file.getAbsolutePath());
+			LOG.debug("Deleting unversioned file {}",deresolved);
+			file.delete();
+			PropertyFileDiff pfd = PropertiesFactory.eINSTANCE.createPropertyFileDiff();
+			pfd.setOldPath(deresolved);
+			pfd.setKind(DiffKind.REMOVE);
+			diff.add(pfd);
+		}
+		
+	}
+	
+	protected String deresolve(String path) {
+		return path.substring(basePath.length());
+	}
+	
 }
