@@ -55,6 +55,9 @@ public class AndroidConverter implements PropertyConverter{
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document result = builder.parse(in);
 			PropertyFile file = PropertiesFactory.eINSTANCE.createPropertyFile();
+			Node firstNode = result.getChildNodes().item(0);
+			if(firstNode.getNodeType()==Node.COMMENT_NODE)
+				file.setLicenseHeader(firstNode.getNodeValue());
 			Node resources = result.getDocumentElement();
 			if(!ROOT_NODE.equals(resources.getNodeName())) {
 				LOG.error("XML does not start with "+ROOT_NODE+" but "+resources.getLocalName()+". Location: "+uri);
@@ -81,10 +84,8 @@ public class AndroidConverter implements PropertyConverter{
 		if(node.getNodeType()==Node.TEXT_NODE)
 			return;
 		if(node.getNodeType()==Node.COMMENT_NODE) {
-			if (node instanceof Comment) {
-				Comment c = (Comment) node;
-				comment = c.getData();
-			}
+			comment = node.getNodeValue();
+			
 			return;
 		}
 		Property property = PropertiesFactory.eINSTANCE.createProperty();
@@ -180,7 +181,7 @@ public class AndroidConverter implements PropertyConverter{
 	
 	@Override
 	public int write(OutputStream out, PropertyFile file, String encoding) throws IOException {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

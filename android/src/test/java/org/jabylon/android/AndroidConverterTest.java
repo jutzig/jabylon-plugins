@@ -2,6 +2,7 @@ package org.jabylon.android;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.emf.common.util.URI;
+import org.jabylon.properties.PropertiesFactory;
 import org.jabylon.properties.Property;
 import org.jabylon.properties.PropertyFile;
 import org.junit.Before;
@@ -27,6 +29,7 @@ public class AndroidConverterTest {
 	public void testLoad() throws IOException {
 		PropertyFile result = fixture.load(loadXML(new File("src/test/resources/android.xml")),"UTF-8");
 		assertEquals(4, result.getProperties().size());
+		assertEquals(" license header ", result.getLicenseHeader());
 	}
 	
 	@Test
@@ -61,6 +64,20 @@ public class AndroidConverterTest {
 		assertEquals("numberOfSongsAvailable", property.getKey());
 		assertEquals("one) One song found.\nother) %d songs found.", property.getValue());
 	}
+	
+	@Test
+	public void testWriteSimpleString() throws IOException {
+		PropertyFile file = PropertiesFactory.eINSTANCE.createPropertyFile();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Property property = PropertiesFactory.eINSTANCE.createProperty();
+		file.getProperties().add(property);
+		property.setKey("key");
+		property.setValue("value");
+		property.setComment("comment");
+		fixture.write(out, file, "UTF-8");
+		assertEquals("<xml", new String(out.toByteArray(),"UTF-8"));
+	}
+	
 
 	private InputStream loadXML(File file) throws FileNotFoundException {
 		return new FileInputStream(file);
