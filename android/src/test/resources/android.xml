@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="numberOfSongsAvailable">
+        <item quantity="one">One song found.</item>
+        <item quantity="other">%d songs found.</item>
+    </plurals>
+	<string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+    </string-array>   
+    <string name="hello">Hello!</string>
+    <!-- testcomment -->
+    <string name="test">test</string> 
+</resources>
