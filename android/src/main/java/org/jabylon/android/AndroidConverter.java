@@ -3,13 +3,24 @@ package org.jabylon.android;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.jabylon.properties.PropertiesFactory;
+import org.jabylon.properties.PropertiesPackage;
 import org.jabylon.properties.Property;
 import org.jabylon.properties.PropertyAnnotation;
 import org.jabylon.properties.PropertyFile;
@@ -18,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -36,15 +48,30 @@ public class AndroidConverter implements PropertyConverter{
 	private static final String ITEM = "item";
 
 	private static final String ROOT_NODE = "resources";
+	
+	/**
+	 * for plurals in the form
+	 * <pre>
+	 * one) value1
+	 * two) value2
+	 * </pre>
+	 */
+	private static final Pattern PLURAL_PATTERN = Pattern.compile("(\\w+)\\)\\s*(.*)");
 
 	private static final Logger LOG = LoggerFactory.getLogger(AndroidConverter.class);
+	
+	/**
+	 * allows to disable pretty print for unit tests
+	 */
+	private boolean prettyPrint = true;
 	
 	private URI uri;
 
 	private String comment;
 	
-	public AndroidConverter(URI resourceLocation) {
+	public AndroidConverter(URI resourceLocation, boolean prettyPrint) {
 		this.uri = resourceLocation;
+		this.prettyPrint = prettyPrint;
 	}
 	
 	@Override
@@ -135,9 +162,11 @@ public class AndroidConverter implements PropertyConverter{
 			//get rid of last linefeed
 			value.setLength(value.length()-1);
 		property.setValue(decode(value.toString()));
-		PropertyAnnotation annotation = PropertiesFactory.eINSTANCE.createPropertyAnnotation();
-		annotation.setName(STRING_ARRAY);
-		property.getAnnotations().add(annotation);
+		if(property.findAnnotation(PLURALS)==null) {
+			PropertyAnnotation annotation = PropertiesFactory.eINSTANCE.createPropertyAnnotation();
+			annotation.setName(PLURALS);
+			property.getAnnotations().add(annotation);			
+		}
 		
 	}
 
@@ -160,9 +189,11 @@ public class AndroidConverter implements PropertyConverter{
 			//get rid of last linefeed
 			value.setLength(value.length()-1);
 		property.setValue(decode(value.toString()));
-		PropertyAnnotation annotation = PropertiesFactory.eINSTANCE.createPropertyAnnotation();
-		annotation.setName(STRING_ARRAY);
-		property.getAnnotations().add(annotation);
+		if(property.findAnnotation(STRING_ARRAY)==null) {
+			PropertyAnnotation annotation = PropertiesFactory.eINSTANCE.createPropertyAnnotation();
+			annotation.setName(STRING_ARRAY);
+			property.getAnnotations().add(annotation);			
+		}
 	}
 
 	/**
@@ -179,12 +210,129 @@ public class AndroidConverter implements PropertyConverter{
 		return textContent.replace("\\'", "'");
 	}
 	
+	private String encode(String textContent) {
+		if(textContent==null)
+			return null;
+		return textContent.replace("'", "\\'").replace("\"", "\\\"");
+	}
+	
+	private boolean isFilled(String s){
+		return s!=null && !s.isEmpty();
+	}
+	
 	@Override
 	public int write(OutputStream out, PropertyFile file, String encoding) throws IOException {
-		
-		return 0;
+		try {
+			int counter = 0;
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			Document document = factory.newDocumentBuilder().newDocument();
+			if(isFilled(file.getLicenseHeader()))
+			{
+				document.appendChild(document.createComment(file.getLicenseHeader()));
+			}
+			Element root = document.createElement(ROOT_NODE);
+			document.appendChild(root);
+			EList<Property> properties = file.getProperties();
+			for (Property property : properties) {
+				if(writeProperty(root, document, property))
+					counter++;
+			}
+			
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			if(prettyPrint){
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");				
+			}
+			DOMSource source = new DOMSource(document);
+			StreamResult result = new StreamResult(out);
+	
+	 
+			transformer.transform(source, result);
+			
+			return counter;
+		} catch (ParserConfigurationException e) {
+			throw new IOException(e);
+		} catch (TransformerConfigurationException e) {
+			throw new IOException(e);
+		} catch (TransformerException e) {
+			throw new IOException(e);
+		} finally{
+			out.close();
+		}
 	}
 
+	private boolean writeProperty(Element root, Document document, Property property) throws IOException {
+		if(!isFilled(property.getValue()))
+			return false;
+		writeCommentAndAnnotations(root, document, property);
+		if(property.findAnnotation(STRING_ARRAY)!=null)
+			writeStringArray(root,document,property);
+		else if(property.findAnnotation(PLURALS)!=null)
+			writePlurals(root,document,property);
+		else
+			writeString(root,document,property);
+		return true;
+	}
+	
+
+	private void writeString(Element root, Document document, Property property) {
+		Element string = document.createElement(STRING);
+		root.appendChild(string);
+		string.setAttribute(NAME_ATTRIBUTE, property.getKey());
+		string.setTextContent(encode(property.getValue()));
+	}
+
+	private void writeStringArray(Element root, Document document, Property property) {
+		String[] split = property.getValue().split("(\r)?\n");
+		Element array = document.createElement(STRING_ARRAY);
+		array.setAttribute(NAME_ATTRIBUTE, property.getKey());
+		root.appendChild(array);
+		for (String string : split) {
+			Element item = document.createElement(ITEM);
+			item.setTextContent(encode(string));
+			array.appendChild(item);
+		}
+	}
+	
+	private void writePlurals(Element root, Document document, Property property) {
+		String[] split = property.getValue().split("(\r)?\n");
+		Element array = document.createElement(PLURALS);
+		array.setAttribute(NAME_ATTRIBUTE, property.getKey());
+		root.appendChild(array);
+		for (String string : split) {
+			Element item = document.createElement(ITEM);
+			Matcher matcher = PLURAL_PATTERN.matcher(string);
+			if(matcher.matches()) {
+				String quantity = matcher.group(1);
+				String value = matcher.group(2);
+				item.setAttribute(QUANTITY_ATTRIBUTE, quantity);
+				item.setTextContent(encode(value));	
+			}
+			else
+				LOG.error("Property "+property + " contains invalid plural '"+string+"'. Location "+uri);
+			array.appendChild(item);
+		}
+		
+	}
+
+	private void writeCommentAndAnnotations(Element root, Document document, Property property) throws IOException {
+        if(property.eIsSet(PropertiesPackage.Literals.PROPERTY__COMMENT) || property.getAnnotations().size()>0)
+        {
+        	String comment = property.getCommentWithoutAnnotations();
+        	StringBuilder builder = new StringBuilder();
+        	for (PropertyAnnotation annotation : property.getAnnotations()) {
+				builder.append(annotation);
+			}
+        	if(builder.length()>0 && comment!=null && comment.length()>0 )
+        	{
+        		builder.append("\n");
+        	}
+        	builder.append(comment);
+        	Comment node = document.createComment(builder.toString());
+        	root.appendChild(node);
+        }
+	}
 
 
 }

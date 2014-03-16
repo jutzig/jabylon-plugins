@@ -132,7 +132,7 @@ public class AndroidScanner extends AbstractPropertyScanner implements PropertyS
 	 */
 	@Override
 	public PropertyConverter createConverter(URI resource) {
-		return new AndroidConverter(resource);
+		return new AndroidConverter(resource, true);
 	}
 
 	/* (non-Javadoc)
