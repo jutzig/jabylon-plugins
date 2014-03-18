@@ -49,12 +49,16 @@ public class AndroidScanner extends AbstractPropertyScanner implements PropertyS
 	public File findTemplate(File propertyFile, ScanConfiguration config) {
 		File folder = propertyFile.getParentFile();
 		File container = folder.getParentFile();
-		String baseName = LOCALE_PATTERN.matcher(folder.getName()).group(1);
-		String masterLocale = config.getMasterLocale();
-		String folderName = baseName; 
-		if(masterLocale!=null && !masterLocale.isEmpty())
-			folderName += toAndroidSuffix((Locale) PropertiesFactory.eINSTANCE.createFromString(PropertiesPackage.Literals.LOCALE, masterLocale));
-		return new File(new File(container,folderName),propertyFile.getName());
+		Matcher matcher = LOCALE_PATTERN.matcher(folder.getName());
+		if(matcher.matches()) {
+			String baseName = matcher.group(1);
+			String masterLocale = config.getMasterLocale();
+			String folderName = baseName; 
+			if(masterLocale!=null && !masterLocale.isEmpty())
+				folderName += toAndroidSuffix((Locale) PropertiesFactory.eINSTANCE.createFromString(PropertiesPackage.Literals.LOCALE, masterLocale));
+			return new File(new File(container,folderName),propertyFile.getName());			
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
