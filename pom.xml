@@ -29,6 +29,8 @@
 
 	<modules>
 		<module>team.svn</module>
+		<module>android</module>
+		<module>ios</module>
 		<module>de.jutzig.jabylon.team.cvs</module>
 	</modules>
 
