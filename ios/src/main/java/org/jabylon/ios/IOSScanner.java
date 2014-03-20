@@ -42,9 +42,9 @@ public class IOSScanner extends AbstractPropertyScanner implements PropertyScann
 	public  static final String TYPE = "iOS (UTF-16)";
 	/** example de.lproj or pt-PT.lproj, zh-Hans.lproj 
 	 *  So far I didn't really find a spec for variants like pt-PT...
-	 * 
+	 *  We need the lookahead (?=[-\\.]) to make sure we don't take the first 2 letters of the master folder lproj
 	 */
-    private static final Pattern LOCALE_PATTERN = Pattern.compile("(\\w\\w)?(?:-(\\w){1,4})?\\.?(.+?)");
+    private static final Pattern LOCALE_PATTERN = Pattern.compile("(?:(\\w\\w)(?=[-\\.]))?(?:-(\\w{1,4}))?\\.?(.+?)");
     private static final String[] DEFAULT_EXCLUDES = {};
     private static final String[] DEFAULT_INCLUDES = {"**/*.strings"};
 			

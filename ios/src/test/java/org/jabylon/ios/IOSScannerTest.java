@@ -56,6 +56,11 @@ public class IOSScannerTest {
 	}
 
 	@Test
+	public void testGetLocaleChinese() {
+		assertEquals(new Locale("zh","Hans"), fixture.getLocale(new File("zh-Hans.proj/foo.strings")));
+	}
+	
+	@Test
 	public void testGetLocaleFromFolder() {
 		assertEquals(new Locale("de"), fixture.getLocaleFromFolder(new File("de.proj")));
 		assertNull(fixture.getLocaleFromFolder(new File("proj")));
