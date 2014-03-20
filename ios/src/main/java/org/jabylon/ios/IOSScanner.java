@@ -38,10 +38,13 @@ public class IOSScanner extends AbstractPropertyScanner implements PropertyScann
 	
 	//for iOS see https://developer.apple.com/library/mac/documentation/cocoa/conceptual/loadingresources/Strings/Strings.html
 	
-	@Property(name=PropertyScanner.TYPE, value="iOS")
-	public  static final String TYPE = "iOS";
-	/** example de.lproj */
-    private static final Pattern LOCALE_PATTERN = Pattern.compile("(?:(\\w\\w)\\.)(.+?)");
+	@Property(name=PropertyScanner.TYPE, value="iOS (UTF-16)")
+	public  static final String TYPE = "iOS (UTF-16)";
+	/** example de.lproj or pt-PT.lproj, zh-Hans.lproj 
+	 *  So far I didn't really find a spec for variants like pt-PT...
+	 * 
+	 */
+    private static final Pattern LOCALE_PATTERN = Pattern.compile("(\\w\\w)?(?:-(\\w){1,4})?\\.?(.+?)");
     private static final String[] DEFAULT_EXCLUDES = {};
     private static final String[] DEFAULT_INCLUDES = {"**/*.strings"};
 			
@@ -55,7 +58,7 @@ public class IOSScanner extends AbstractPropertyScanner implements PropertyScann
 		File container = folder.getParentFile();
 		Matcher matcher = LOCALE_PATTERN.matcher(folder.getName());
 		if(matcher.matches()){
-			String baseName = matcher.group(2);
+			String baseName = matcher.group(3);
 			String masterLocale = config.getMasterLocale();
 			String folderName = baseName; 
 			if(masterLocale!=null && !masterLocale.isEmpty())
@@ -95,7 +98,7 @@ public class IOSScanner extends AbstractPropertyScanner implements PropertyScann
 		Matcher matcher = LOCALE_PATTERN.matcher(folder.getName());
 		if (!matcher.matches())
 			return null;
-		String baseName = matcher.group(2);
+		String baseName = matcher.group(3);
 		baseName = toIOSPrefix(translationLocale) + baseName;
 		return new File(new File(container,baseName),template.getName());
 	}
@@ -112,10 +115,10 @@ public class IOSScanner extends AbstractPropertyScanner implements PropertyScann
 	public Locale getLocaleFromFolder(File propertyFolder) {
 		Matcher matcher = LOCALE_PATTERN.matcher(propertyFolder.getName());
 		if(matcher.matches()) {
-			String language = null;
-			int count = matcher.groupCount();
-			if(count>1)
-				language = matcher.group(1);
+			String language = matcher.group(1);
+			String country = matcher.group(2);
+			if(language!=null && country!=null)
+				return new Locale(language,country);
 			if(language!=null)
 				return new Locale(language);
 		}
@@ -167,6 +170,10 @@ public class IOSScanner extends AbstractPropertyScanner implements PropertyScann
 			return "";
 		StringBuilder builder = new StringBuilder();
 		builder.append(locale.getLanguage());
+		if(locale.getCountry()!=null && !locale.getCountry().isEmpty()){
+			builder.append("-");
+			builder.append(locale.getCountry());
+		}
 		builder.append(".");
 		return builder.toString();
 	}
