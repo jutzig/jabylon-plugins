@@ -7,10 +7,6 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,6 +18,7 @@ import org.eclipse.emf.ecore.resource.ContentHandler.ByteOrderMark;
 import org.jabylon.properties.PropertiesFactory;
 import org.jabylon.properties.Property;
 import org.jabylon.properties.PropertyAnnotation;
+import org.jabylon.properties.types.impl.PropertiesHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -43,7 +40,7 @@ public class IOSConverterTest {
 	public void testReadUnicodePropertyWithUnicodeEscapes() throws IOException {
 
 		fixture = new IOSConverter(false);
-		BufferedReader reader = new BufferedReader(new StringReader("\"äö\\u00DC\" = \"aaa\""));
+		BufferedReader reader = new BufferedReader(new StringReader("\"äö\\u00DC\" = \"aaa\";"));
 
 		try {
 			Property property = fixture.readProperty(reader);
@@ -62,7 +59,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("value");
 		fixture.writeProperty(writer, property);
-		assertEquals("/*test*/\n\"key\" = \"value\"\n", writer.toString());
+		assertEquals("/*test*/\n\"key\" = \"value\";\n", writer.toString());
 	}
 
 	@Test
@@ -72,7 +69,7 @@ public class IOSConverterTest {
 		property.setKey("ä");
 		property.setValue("ü");
 		fixture.writeProperty(writer, property);
-		assertEquals("/*test*/\n\"\\u00e4\" = \"\\u00fc\"\n", writer.toString());
+		assertEquals("/*test*/\n\"\\u00e4\" = \"\\u00fc\";\n", writer.toString());
 
 	}
 
@@ -83,7 +80,7 @@ public class IOSConverterTest {
 		property.setKey("key with spaces");
 		property.setValue("test");
 		fixture.writeProperty(writer, property);
-		assertEquals("/*test*/\n\"key with spaces\" = \"test\"\n", writer.toString());
+		assertEquals("/*test*/\n\"key with spaces\" = \"test\";\n", writer.toString());
 
 	}
 
@@ -93,7 +90,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test\ntest");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\" = \"test\\ntest\"\n", writer.toString());
+		assertEquals("\"key\" = \"test\\ntest\";\n", writer.toString());
 
 	}
 
@@ -104,7 +101,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test\r\ntest");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\" = \"test\\r\\ntest\"\n", writer.toString());
+		assertEquals("\"key\" = \"test\\r\\ntest\";\n", writer.toString());
 
 	}
 
@@ -114,7 +111,7 @@ public class IOSConverterTest {
 		property.setKey("key\nkey");
 		property.setValue("test");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\\nkey\" = \"test\"\n", writer.toString());
+		assertEquals("\"key\\nkey\" = \"test\";\n", writer.toString());
 
 	}
 	
@@ -125,7 +122,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test");
 		fixture.writeProperty(writer, property);
-		assertEquals("/*test\ntest*/\n\"key\" = \"test\"\n", writer.toString());
+		assertEquals("/*test\ntest*/\n\"key\" = \"test\";\n", writer.toString());
 
 	}
 
@@ -137,7 +134,7 @@ public class IOSConverterTest {
 		out.write("test".getBytes());
 
 		ByteArrayInputStream stream = new ByteArrayInputStream(out.toByteArray());
-		ByteOrderMark bom = fixture.checkForBom(stream);
+		ByteOrderMark bom = PropertiesHelper.checkForBom(stream);
 		assertEquals(ByteOrderMark.UTF_16BE, bom);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		assertEquals("The reader must contain everything after the bom", "test", reader.readLine());
@@ -147,7 +144,7 @@ public class IOSConverterTest {
 	@Test
 	public void testCheckForBomNoBom() throws Exception {
 		ByteArrayInputStream stream = new ByteArrayInputStream("test".getBytes());
-		ByteOrderMark bom = fixture.checkForBom(stream);
+		ByteOrderMark bom = PropertiesHelper.checkForBom(stream);
 		assertNull(bom);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		assertEquals("The reader must contain everything after the bom", "test", reader.readLine());
@@ -158,7 +155,7 @@ public class IOSConverterTest {
 	public void testCheckForBomWrongStream() throws Exception {
 		InputStream in = Mockito.mock(InputStream.class);
 		when(in.markSupported()).thenReturn(false);
-		fixture.checkForBom(in);
+		PropertiesHelper.checkForBom(in);
 	}
 
 	/**
@@ -184,7 +181,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test\u00A0");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\" = \"test\\u00a0\"\n", writer.toString());
+		assertEquals("\"key\" = \"test\\u00a0\";\n", writer.toString());
 	}
 
 	/**
@@ -199,7 +196,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test\u00A0");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\" = \"test\u00A0\"\n", writer.toString());
+		assertEquals("\"key\" = \"test\u00A0\";\n", writer.toString());
 	}
 
     /**
@@ -209,7 +206,7 @@ public class IOSConverterTest {
      */
 	@Test
 	public void testPreserveNBSPRead() throws IOException {
-		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \"test\\u00a0\"\n"));
+		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \"test\\u00a0\";\n"));
 
 		try {
 			Property property = fixture.readProperty(reader);
@@ -228,7 +225,7 @@ public class IOSConverterTest {
 	@Test
 	public void testPreserveNBSPReadNoEscaping() throws IOException {
 		fixture = new IOSConverter(false);
-		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \"test\u00a0\"\n"));
+		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \"test\u00a0\";\n"));
 
 		try {
 			Property property = fixture.readProperty(reader);
@@ -249,7 +246,7 @@ public class IOSConverterTest {
     public void testMultilineHandling() throws IOException {
         fixture = new IOSConverter(false);
         BufferedReader reader = new BufferedReader(new StringReader("/* foo*/\n\r"
-                                                                    +"\"PROC_INST_DISPLAY_IMG\"=\"dashb_display_12.gif\""));
+                                                                    +"\"PROC_INST_DISPLAY_IMG\"=\"dashb_display_12.gif\";"));
 
         try {
             Property property = fixture.readProperty(reader);
@@ -271,7 +268,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue(" test");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\" = \" test\"\n", writer.toString());
+		assertEquals("\"key\" = \" test\";\n", writer.toString());
 	}
 	
 
@@ -281,7 +278,7 @@ public class IOSConverterTest {
      */
 	@Test
 	public void testLeadingSpacesRead() throws IOException {
-		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \" value\""));
+		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \" value\";"));
 		Property property = fixture.readProperty(reader);
 		assertEquals("key", property.getKey());
 		assertEquals(" value", property.getValue());
@@ -299,7 +296,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test\ntest");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\" = \"test\\ntest\"\n", writer.toString());
+		assertEquals("\"key\" = \"test\\ntest\";\n", writer.toString());
 	}
 	
 	/**
@@ -313,7 +310,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test\r\ntest");
 		fixture.writeProperty(writer, property);
-		assertEquals("\"key\" = \"test\\r\\ntest\"\n", writer.toString());
+		assertEquals("\"key\" = \"test\\r\\ntest\";\n", writer.toString());
 	}
 	
     /**
@@ -323,7 +320,7 @@ public class IOSConverterTest {
      */
 	@Test
 	public void testCRLFRead() throws IOException {
-		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \"value\\r\\n\""));
+		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \"value\\r\\n\";"));
 		Property property = fixture.readProperty(reader);
 		assertEquals("key", property.getKey());
 		assertEquals("value\r\n", property.getValue());
@@ -349,7 +346,7 @@ public class IOSConverterTest {
 		property.setKey("key");
 		property.setValue("test");
 		fixture.writeProperty(writer, property);
-		assertEquals("/*@foo(test=\"value\")@bar\ncomment*/\n\"key\" = \"test\"\n", writer.toString());
+		assertEquals("/*@foo(test=\"value\")@bar\ncomment*/\n\"key\" = \"test\";\n", writer.toString());
 	}
 	
     /**
@@ -358,13 +355,27 @@ public class IOSConverterTest {
      */
 	@Test
 	public void testReadPropertyWithAnnotation() throws IOException {
-		BufferedReader reader = new BufferedReader(new StringReader("/*@foo(test=\"value\")@bar*/\n\"key\" = \"value\""));
+		BufferedReader reader = new BufferedReader(new StringReader("/*@foo(test=\"value\")@bar*/\n\"key\" = \"value\";"));
 		Property property = fixture.readProperty(reader);
 		assertEquals("key", property.getKey());
 		assertEquals("value", property.getValue());
 		assertEquals(2, property.getAnnotations().size());
 		assertEquals("foo", property.getAnnotations().get(0).getName());
 	}
+	
+    /**
+     * tests that properties can still be parsed if the semicolon is missing.
+     * The semicolon at the end really is mandatory, but when it's just parsing
+     * we can be more linient.
+     * @throws IOException
+     */
+	@Test
+	public void testReadPropertyWithoutSemicolon() throws IOException {
+		BufferedReader reader = new BufferedReader(new StringReader("\"key\" = \"value\""));
+		Property property = fixture.readProperty(reader);
+		assertEquals("key", property.getKey());
+		assertEquals("value", property.getValue());
+	}	
 
     protected BufferedReader asReader(String string)
     {

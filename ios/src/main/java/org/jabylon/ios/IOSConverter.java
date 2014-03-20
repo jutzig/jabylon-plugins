@@ -22,7 +22,7 @@ public class IOSConverter extends PropertiesHelper{
     
     private boolean isInComment = false;
 
-    private static final Pattern SPLIT_PATTERN = Pattern.compile("\"(.*?)\"\\s*=(?:\\s*\"(.*?)\")",Pattern.DOTALL);
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("\"(.*?)\"\\s*=(?:\\s*\"(.*?)\");?",Pattern.DOTALL);
     
     final Logger logger = LoggerFactory.getLogger(IOSConverter.class);
 
@@ -93,7 +93,7 @@ public class IOSConverter extends PropertiesHelper{
             writer.write(value);
             writer.write('"');
         }
-        writer.write('\n');
+        writer.write(";\n");
 
     }
 
