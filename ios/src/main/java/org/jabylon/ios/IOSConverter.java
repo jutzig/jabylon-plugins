@@ -68,6 +68,15 @@ public class IOSConverter extends PropertiesHelper{
     	}
     	return isInComment;
     }
+    
+    @Override
+    protected String parseComment(String line) {
+    	if(line.startsWith("/*"))
+    		line = line.substring(2);
+    	if(line.endsWith("*/"))
+    		line = line.substring(0,line.length()-2);
+    	return line.trim();
+    }
 
     @Override
 	public void writeProperty(Writer writer, Property property) throws IOException

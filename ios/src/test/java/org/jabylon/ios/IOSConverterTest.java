@@ -376,6 +376,25 @@ public class IOSConverterTest {
 		assertEquals("key", property.getKey());
 		assertEquals("value", property.getValue());
 	}	
+	
+	
+	@Test
+	public void testReadPropertyWithComment() throws IOException {
+		BufferedReader reader = new BufferedReader(new StringReader("/* A comment */\n\"key\" = \"value\";"));
+		Property property = fixture.readProperty(reader);
+		assertEquals("key", property.getKey());
+		assertEquals("value", property.getValue());
+		assertEquals("A comment", property.getComment());
+	}
+	
+	@Test
+	public void testReadPropertyWithMultilineComment() throws IOException {
+		BufferedReader reader = new BufferedReader(new StringReader("/* A comment \n on several lines */\n\"key\" = \"value\";"));
+		Property property = fixture.readProperty(reader);
+		assertEquals("key", property.getKey());
+		assertEquals("value", property.getValue());
+		assertEquals("A comment\non several lines", property.getComment());
+	}
 
     protected BufferedReader asReader(String string)
     {
