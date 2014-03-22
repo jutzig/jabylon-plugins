@@ -9,7 +9,7 @@
 		<artifactId>jabylon-parent</artifactId>
 	</parent>
 	
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 
 	<description>Adds support for iOS strings</description>
 
@@ -17,7 +17,7 @@
 		<url>https://github.com/jutzig/jabylon-plugins</url>
 		<connection>scm:git:https://github.com/jutzig/jabylon-plugins.git</connection>
 		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>v1.1.0</tag>
   </scm>
 
 	<repositories>
