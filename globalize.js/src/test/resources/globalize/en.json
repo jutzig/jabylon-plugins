@@ -1,0 +1,10 @@
+{
+ "en": {
+    "hello": "Hello",
+    
+    "world": {
+      "prop": "value"
+    },
+    "test": "value"
+  }
+}
