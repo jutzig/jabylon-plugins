@@ -32,6 +32,7 @@
 		<module>android</module>
 		<module>ios</module>
 		<module>de.jutzig.jabylon.team.cvs</module>
+		<module>csharp</module>
 	</modules>
 
 		<repositories>
