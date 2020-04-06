@@ -33,7 +33,7 @@
 		</repository>
 	</repositories>
 
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1</version>
 	
 	<description>Team Provider that connects to CVS repositories</description>
 
@@ -41,6 +41,7 @@
 		<url>https://github.com/jutzig/jabylon-plugins</url>
 		<connection>scm:git:https://github.com/jutzig/jabylon-plugins.git</connection>
 		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
+    <tag>v1.2.1</tag>
   </scm>
 
 	<build>
