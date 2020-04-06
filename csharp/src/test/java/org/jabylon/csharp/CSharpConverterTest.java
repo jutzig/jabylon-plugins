@@ -15,6 +15,8 @@ import org.jabylon.properties.Property;
 import org.jabylon.properties.PropertyFile;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class CSharpConverterTest {
@@ -22,10 +24,17 @@ public class CSharpConverterTest {
 	private CSharpConverter fixture;
 
 	private static final String RESX_FILE = "src/test/resources/TestRibbon.resx";
-
+	
+	private static final Logger LOG = LoggerFactory.getLogger(CSharpConverterTest.class);
+	
 	@Before
 	public void setup() {
-		fixture = new CSharpConverter(URI.createFileURI(RESX_FILE), false);
+		
+		URI resourceLocation = URI.createFileURI(RESX_FILE);
+		
+		if (null != resourceLocation) {
+			fixture = new CSharpConverter(resourceLocation, false);
+		}
 	}
 
 	@Test
