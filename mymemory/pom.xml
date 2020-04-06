@@ -6,8 +6,10 @@
     <parent>
         <groupId>org.jabylon</groupId>
         <artifactId>jabylon-parent</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.0</version>
     </parent>
+    
+    <version>1.2.1-SNAPSHOT</version>
     
     <description>Adds mymemory.translated.net as a translation tool</description>
 
@@ -27,17 +29,17 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>properties</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>common</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rest.ui</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
@@ -46,7 +48,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>security</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
         	<groupId>org.osgi</groupId>

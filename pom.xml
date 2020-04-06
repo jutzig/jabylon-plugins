@@ -4,7 +4,7 @@
 	<groupId>org.jabylon</groupId>
 	<artifactId>jabylon-plugins</artifactId>
 	<packaging>pom</packaging>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<parent>
 		<groupId>org.jabylon</groupId>
 		<version>1.1.0</version>
@@ -15,7 +15,6 @@
 		<url>https://github.com/jutzig/jabylon-plugins</url>
 		<connection>scm:git:https://github.com/jutzig/jabylon-plugins.git</connection>
 		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
-	  <tag>v1.1.0</tag>
   </scm>
 
 	<properties>
@@ -34,6 +33,19 @@
 		<module>de.jutzig.jabylon.team.cvs</module>
 		<module>csharp</module>
 	</modules>
+
+	<build>
+		<extensions>
+			<!-- Enabling the use of sftp -->
+			<!-- <extension> <groupId>org.apache.maven.wagon</groupId> <artifactId>wagon-ssh-external</artifactId> 
+				<version>1.0-beta-6</version> </extension> -->
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.10</version>
+			</extension>
+		</extensions>
+	</build>
 
 		<repositories>
 		<repository>
