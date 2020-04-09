@@ -1,4 +1,4 @@
 jabylon-plugins
 ===============
 
-release with mvn install bundle:deploy
+release with mvn install deploy
