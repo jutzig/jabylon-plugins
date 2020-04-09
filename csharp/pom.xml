@@ -19,6 +19,11 @@
 		<developerConnection>scm:git:https://github.com/jutzig/jabylon-plugins.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
+  
+  <properties>
+		<release.version>${version}</release.version>
+		<release.tag>v${version}</release.tag>
+  </properties>
 
 	<repositories>
 		<repository>
@@ -49,6 +54,16 @@
 				</includes>
 			</resource>
 		</resources>
+		
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<configuration>
+					<remoteOBR>jabylon</remoteOBR>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<dependencies>
